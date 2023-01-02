@@ -17,3 +17,4 @@ Load data and call the previously defined model class for training and testing.
 
 ## lenet_pytorch.py
 Use the modules in torch to build a lenet to realize network training and testing. At the same time, visdom is used to visually see the change curve of loss in real time.
+This code refers to "https://github.com/activatedgeek/LeNet-5.git".

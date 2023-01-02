@@ -115,7 +115,7 @@ class LeNet5(nn.Module): #导入神经网络基类Module进行搭建
         return output
 
 viz = visdom.Visdom()#打开visdom.server
-bestaccuracy = 0
+best_accuracy = 0
 
 data_train = MNIST('./data/mnist',
                    download=True,
@@ -150,7 +150,7 @@ cur_batch_win_opts = {
 
 def train(epoch):
     global cur_batch_win
-    net.train() #加与不加都行
+    net.train()
     loss_list, batch_list = [], []#分别记录对应次数下的损失
     for i, (images, labels) in enumerate(data_train_loader):
         optimizer.zero_grad() #梯度归零
@@ -187,13 +187,13 @@ def test():
         total_correct += pred.eq(labels.view_as(pred)).sum() #累加与pred同类型的labels（即为正确）的数值，即记录正确分数
 
     avg_loss /= len(data_test) #平均误差
-    global bestaccuracy
-    if(float(total_correct) / len(data_test) > bestaccuracy):
+    global best_accuracy
+    if(float(total_correct) / len(data_test) > best_accuracy):
         torch.save(net.cpu().state_dict(), 'model.pth')
-    bestaccuracy = max(bestaccuracy,float(total_correct) / len(data_test))
-    print('bestaccuracy is %f' % bestaccuracy)
+    best_accuracy = max(best_accuracy,float(total_correct) / len(data_test))
+    print('bestaccuracy is %f' % best_accuracy)
     print('Test Avg. Loss: %f, Accuracy: %f' % (avg_loss.detach().cpu().item(), float(total_correct) / len(data_test))) #输出信息
-    return bestaccuracy
+    return best_accuracy
 
 def train_and_test(epoch): #训练epoch次后测试
     train(epoch) #训练epoch次
@@ -205,7 +205,7 @@ def train_and_test(epoch): #训练epoch次后测试
     onnx.checker.check_model(onnx_model) #检查onnx格式模型是否有错误
 
 def main(): #开始训练和测试
-    for e in range(1, 16):
+    for e in range(1, 10):
         train_and_test(e)
 
 if __name__ == '__main__':
