@@ -21,7 +21,7 @@ class FullyConnectedLayer(object):
         self.update_param(lr)
         return bottom_diff
     def update_param(self, lr):  # 参数更新
-        # TODO：对全连接层参数利用参数进行更新
+        #对全连接层参数利用参数进行更新
         self.w = self.w - lr*self.d_weight
         self.b = np.reshape(np.average(self.b - lr*self.d_bias, axis=0),(1, self.num_output))#从(n,c)重新变为(1,c)
     def load_param(self, weight, bias):  # 参数加载
@@ -38,7 +38,7 @@ class SoftmaxLossLayer(object):
     def __init__(self):
         pass
     def forward(self, input):  # 前向传播的计算
-        # TODO：softmax 损失层的前向传播，计算输出结果
+        #softmax 损失层的前向传播，计算输出结果
         #input_max = np.max(input, axis=1, keepdims=True)#生成(n,1)大小的每行的最大值
         input_exp = np.exp(input)#生成(n,class)大小的e^(每个类别的概率)
         sum_denominator = np.sum(input_exp,axis=1,keepdims=True)#取每行的和,变成（n,1)
@@ -52,7 +52,7 @@ class SoftmaxLossLayer(object):
         loss = -np.sum(np.log(self.prob) * self.label_onehot) / self.batch_size
         return loss
     def backward(self):  # 反向传播的计算
-        # TODO：softmax 损失层的反向传播，计算本层损失（这边要的是一个梯度矩阵）
+        #softmax 损失层的反向传播，计算本层损失（这边要的是一个梯度矩阵）
         bottom_diff = (self.prob - self.label_onehot)/self.batch_size        
         return bottom_diff
 ####################softmax网络定义部分#######################
