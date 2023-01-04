@@ -1,10 +1,10 @@
 import torch
 import torch.nn as nn
-import torchvision
 import torch.optim as optim
 from torch.utils.data import DataLoader
 import torchvision.datasets as datasets
 import torchvision.transforms as transforms
+from vgg import VGG
 
 data_train = datasets.CIFAR10('cifar', True, transform=transforms.Compose([
         transforms.Resize((224,224)),
@@ -14,19 +14,12 @@ data_test = datasets.CIFAR10('cifar', False, transform=transforms.Compose([
     transforms.Resize((224,224)),
     transforms.ToTensor()
 ]), download=True)
-data_train_loader = DataLoader(data_train, batch_size=32, shuffle=True, num_workers=4)#数据加载器加载训练数据
-data_test_loader = DataLoader(data_test, batch_size=16, num_workers=4)#数据加载器加载测试数据
+data_train_loader = DataLoader(data_train, batch_size=32, shuffle=True, num_workers=2)#数据加载器加载训练数据
+data_test_loader = DataLoader(data_test, batch_size=16, num_workers=2)#数据加载器加载测试数据
 
-model=torchvision.models.AlexNet()
-model.add_module('add_relu',nn.ReLU())
-model.add_module('add_linear',nn.Linear(1000,10))
-#model.features[0]=nn.Conv2d(1,64,(11,11),4,2)
-#model.add_module('add_linear1',nn.Linear(1000,512))
-#model.add_module('add_linear2',nn.Linear(512,128))
-#model.add_module('add_linear3',nn.Linear(128,10))
-#print(model)
+model = VGG()
 device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
-model.to(device)
+model =  model.to(device)
 
 # config
 epochs = 12#迭代次数

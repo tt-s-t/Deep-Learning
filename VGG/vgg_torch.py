@@ -17,20 +17,16 @@ data_test = datasets.CIFAR10('cifar', False, transform=transforms.Compose([
 data_train_loader = DataLoader(data_train, batch_size=32, shuffle=True, num_workers=4)#数据加载器加载训练数据
 data_test_loader = DataLoader(data_test, batch_size=16, num_workers=4)#数据加载器加载测试数据
 
-model=torchvision.models.AlexNet()
+model = torchvision.models.vgg19()
 model.add_module('add_relu',nn.ReLU())
 model.add_module('add_linear',nn.Linear(1000,10))
-#model.features[0]=nn.Conv2d(1,64,(11,11),4,2)
-#model.add_module('add_linear1',nn.Linear(1000,512))
-#model.add_module('add_linear2',nn.Linear(512,128))
-#model.add_module('add_linear3',nn.Linear(128,10))
-#print(model)
+
 device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
 # config
 epochs = 12#迭代次数
-lr = 0.1#学习率
+lr = 0.01#学习率
 
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=lr)
@@ -42,7 +38,7 @@ def train():
         model.train()#训练模式
         epoch_loss = 0
         epoch_accuracy = 0
-        for i, (data, label) in enumerate(data_train_loader):
+        for _, (data, label) in enumerate(data_train_loader):
             data = data.to(device)
             label = label.to(device)
             output = model(data)#输出
@@ -63,13 +59,13 @@ def test():
     model.eval() #加与不加都行
     total_correct = 0 #记录正确数目
     avg_loss = 0.0 #记录平均错误
-    for i, (images, labels) in enumerate(data_test_loader):
+    for _, (images, labels) in enumerate(data_test_loader):
         images = images.to(device)
         labels = labels.to(device)
         output = model(images)
         avg_loss += criterion(output, labels).sum() #将损失累加起来
-        pred = output.detach().max(1)[1] #max(1)得到每行最大值的第一个（得到概率最大的那个）
-        total_correct += pred.eq(labels.view_as(pred)).sum() #累加与pred同类型的labels（即为正确）的数值，即记录正确分数
+        pred = output.detach().max(1)[1] #max(1)得到每行最大值的第一个（得到概率最大的那个）,.detach()指这个tensor永远不需要计算其梯度
+        total_correct += pred.eq(labels.view_as(pred)).sum() #累加与pred同类型的labels（即为正确）的数值，即记录正确分数(如果预测对了对应的位置就是1)
 
     avg_loss /= len(data_test) #平均误差
     if(float(total_correct) / len(data_test) > best_accuracy):
