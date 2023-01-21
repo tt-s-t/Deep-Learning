@@ -30,7 +30,7 @@ class RNN(object):
         dbh, dbq = np.zeros_like(self.b_h), np.zeros_like(self.b_q)
         dh = np.zeros_like(self.hs[0])
 
-        T = len(self.input) - 1
+        T = len(self.input)
         for t in reversed(range(T)): #反过来开始，因为像隐藏状态求偏导那样，越往前面分支越多
             #loss计算
             label_onehot = np.zeros_like(self.ps[t])
